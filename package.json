@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/space900/express-mesto/issues"
   },
-  "homepage": "https://github.com/space900/express-mesto#readme"
+  "homepage": "https://github.com/space900/express-mesto#readme",
+  "devDependencies": {
+    "eslint": "^7.32.0"
+  }
 }
