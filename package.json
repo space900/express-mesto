@@ -2,11 +2,10 @@
   "name": "express-mesto",
   "version": "1.0.0",
   "description": "project Mesto backend + frontend",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint .",
-    "start": "app.js",
+    "start": "node app.js",
     "dev": "nodemon app.js"
   },
   "repository": {
@@ -26,6 +25,7 @@
     "nodemon": "^2.0.13"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mongoose": "^6.0.8"
   }
 }
