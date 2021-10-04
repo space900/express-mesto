@@ -18,7 +18,6 @@ app.post('/', createUser);
 
 app.use('/', usersRoutes);
 app.use('/', cardsRoutes);
-
 app.use((req, res, next) => {
   req.user = {
     _id: '615b330494e76a795d48c9b3',
