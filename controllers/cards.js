@@ -20,3 +20,19 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   Card.findById(req.params.cardId);
 };
+
+// eslint-disable-next-line no-unused-vars
+module.exports.likeCard = (req, res, next) => {
+  Card.findByIdAndUpdate(req.params.cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true })
+    .catch(next);
+};
+
+// eslint-disable-next-line no-unused-vars
+module.exports.dislikeCard = (req, res, next) => {
+  Card.findByIdAndUpdate(req.params.cardId,
+    { $pull: { likes: req.user._id } },
+    { new: true })
+    .catch(next);
+};
