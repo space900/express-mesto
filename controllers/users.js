@@ -1,5 +1,10 @@
 /* eslint-disable arrow-body-style */
 const User = require('../models/user');
+const {
+  BadRequest,
+  InternalServerError,
+  NotFound,
+} = require('../errors/errors');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -13,6 +18,7 @@ module.exports.getUserById = (req, res, next) => {
       if (user) {
         return res.status(200).send(user);
       }
+      throw new BadRequest()
       return res.status(404).send({ message: 'Пользователь не найден' });
     })
     .catch((err) => {
