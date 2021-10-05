@@ -7,7 +7,6 @@ module.exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 
-// eslint-disable-next-line no-unused-vars
 module.exports.getUserById = (req, res, next) => {
   return User.findById(req.params.userId)
     .then((user) => {
