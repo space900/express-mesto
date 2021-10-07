@@ -2,9 +2,8 @@
 const User = require('../models/user');
 const {
   BadRequest,
-  InternalServerError,
   NotFound,
-} = require('../errors/errors');
+} = require('../errors/classes');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -14,15 +13,18 @@ module.exports.getUsers = (req, res, next) => {
 
 module.exports.getUserById = (req, res, next) => {
   return User.findById(req.params.userId)
+    // eslint-disable-next-line consistent-return
     .then((user) => {
-      if (user) {
-        return res.status(200).send(user);
+      if (!user) {
+        throw new NotFound('Пользователь по указанному _id не найден');
       }
-      throw new BadRequest()
-      return res.status(404).send({ message: 'Пользователь не найден' });
+      return res.status(200).send(user);
     })
     .catch((err) => {
-      return res.status(500).send({ message: err.message });
+      if (err.name === 'CastError') {
+        throw new BadRequest(err.message);
+      }
+      next(err);
     })
     .catch(next);
 };
