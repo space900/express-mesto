@@ -1,32 +1,30 @@
 /* eslint-disable arrow-body-style */
 const User = require('../models/user');
-const {
-  BadRequest,
-  NotFound,
-} = require('../errors/classes');
+const messages = require('../errors/messages');
 
-module.exports.getUsers = (req, res, next) => {
+module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
-    .catch(next);
+    .catch(() => {
+      return res.status(500).send(messages.INTERNAL_SERVER);
+    });
 };
 
-module.exports.getUserById = (req, res, next) => {
+module.exports.getUserById = (req, res) => {
   return User.findById(req.params.userId)
     // eslint-disable-next-line consistent-return
     .then((user) => {
       if (!user) {
-        throw new NotFound('Пользователь по указанному _id не найден');
+        return res.status(404).send(messages.NOT_FOUND);
       }
       return res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequest(err.message);
+        return res.status(400).send(messages.BAD_REQUEST_USER_SEARCH);
       }
-      next(err);
-    })
-    .catch(next);
+      return res.status(500).send(messages.INTERNAL_SERVER);
+    });
 };
 
 module.exports.createUser = (req, res) => {
@@ -36,23 +34,48 @@ module.exports.createUser = (req, res) => {
     .then((user) => {
       return res.status(200).send(user);
     })
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(400).send(messages.BAD_REQUEST_USER_CREATE);
+      }
+      return res.status(500).send(messages.INTERNAL_SERVER);
+    });
 };
 
-module.exports.updateProfile = (req, res, next) => {
+module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
   const id = req.user._id;
 
-  User.findByIdAndUpdate(id, { name, about })
-    .then((user) => res.status(200).send({ data: user }))
-    .catch(next);
+  return User.findByIdAndUpdate(id, { name, about })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send(messages.NOT_FOUND);
+      }
+      return res.status(200).send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(400).send(messages.BAD_REQUEST_USER_UPD);
+      }
+      return res.status(500).send(messages.INTERNAL_SERVER);
+    });
 };
 
-module.exports.updateAvatar = (req, res, next) => {
+module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
   const id = req.user._id;
 
-  User.findByIdAndUpdate(id, { avatar })
-    .then((user) => res.status(200).send({ data: user }))
-    .catch(next);
+  return User.findByIdAndUpdate(id, { avatar })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send(messages.BAD_REQUEST_AVATAR_UPD);
+      }
+      return res.status(200).send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(404).send(messages.BAD_REQUEST_AVATAR_UPD);
+      }
+      return res.status(500).send(messages.INTERNAL_SERVER);
+    });
 };
