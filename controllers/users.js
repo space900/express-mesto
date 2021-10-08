@@ -46,7 +46,7 @@ module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
   const id = req.user._id;
 
-  return User.findByIdAndUpdate(id, { name, about })
+  return User.findByIdAndUpdate(id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         return res.status(404).send(messages.NOT_FOUND);
@@ -65,7 +65,7 @@ module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
   const id = req.user._id;
 
-  return User.findByIdAndUpdate(id, { avatar })
+  return User.findByIdAndUpdate(id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         return res.status(404).send(messages.BAD_REQUEST_AVATAR_UPD);
