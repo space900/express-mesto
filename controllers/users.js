@@ -1,3 +1,6 @@
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 /* eslint-disable arrow-body-style */
 const User = require('../models/user');
 const messages = require('../errors/messages');
@@ -27,19 +30,25 @@ module.exports.getUserById = (req, res) => {
     });
 };
 
-module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+module.exports.createUser = (req, res, next) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
 
-  return User.create({ name, about, avatar })
-    .then((user) => {
-      return res.status(200).send(user);
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(400).send(messages.BAD_REQUEST_USER_CREATE);
-      }
-      return res.status(500).send(messages.INTERNAL_SERVER);
-    });
+      .then((user) => {
+        return res.status(200).send(user);
+      })
+      .catch((err) => {
+        if (err.name === 'ValidationError') {
+          return res.status(400).send(messages.BAD_REQUEST_USER_CREATE);
+        }
+        return res.status(500).send(messages.INTERNAL_SERVER);
+      }))
+    .catch(next);
 };
 
 module.exports.updateProfile = (req, res) => {
@@ -77,5 +86,15 @@ module.exports.updateAvatar = (req, res) => {
         return res.status(404).send(messages.BAD_REQUEST_AVATAR_UPD);
       }
       return res.status(500).send(messages.INTERNAL_SERVER);
+    });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, '123123', { expiresIn: '7d' });
+      res.send({ token });
     });
 };

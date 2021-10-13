@@ -7,4 +7,5 @@ module.exports = {
   NOT_FOUND: { message: 'Пользователь по указанному _id не найден' },
   NOT_FOUND_CARD: { message: 'Карточка с указанным _id не найдена' },
   INTERNAL_SERVER: { message: 'Произошла ошибка на сервере' },
+  BAD_EMAIL_VALID: { message: 'Неправильный формат почты' },
 };
