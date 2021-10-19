@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
 // eslint-disable-next-line no-unused-vars
 const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
@@ -12,6 +13,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
+app.use(helmet());
 app.use(express.json());
 
 app.use((req, res, next) => {
