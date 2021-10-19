@@ -94,7 +94,10 @@ module.exports.login = (req, res) => {
 
   User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, '123123', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
       res.send({ token });
+    })
+    .catch((err) => {
+      return res.status(401).send({ message: err.message });
     });
 };
