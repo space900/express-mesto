@@ -11,4 +11,5 @@ module.exports = {
   UNAUTH_REQUEST_DATA: { message: 'Указан неправильный логин или пароль' },
   BAD_REQUEST_CARD_DELETE: { message: 'Недостаточно прав для удаления карточки' },
   BAD_REQUEST_EMAIL_CREATE: { message: 'Данный email уже зарегистрирован' },
+  SERVER_NOT_FOUND: { message: 'Запрашиваемые данные не найдены' },
 };

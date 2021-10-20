@@ -6,6 +6,8 @@ const rateLimit = require('express-rate-limit');
 const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
+const { NotFound } = require('./errors/classes');
+const messages = require('./errors/messages');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -34,6 +36,16 @@ app.use('/', usersRoutes);
 app.use('/', cardsRoutes);
 app.post('/signin', login);
 app.post('/signup', createUser);
+
+app.use('*', () => {
+  throw new NotFound(messages.SERVER_NOT_FOUND);
+});
+
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  res.status(statusCode).send({ message: statusCode === 500 ? 'На сервере произошла ошибка' : message });
+  next();
+});
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
