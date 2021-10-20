@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const { errors } = require('celebrate');
 // eslint-disable-next-line no-unused-vars
 const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
@@ -33,6 +34,7 @@ app.post('/signup', createUser);
 app.use('*', () => {
   throw new NotFound(messages.SERVER_NOT_FOUND);
 });
+app.use(errors());
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
