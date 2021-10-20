@@ -8,4 +8,7 @@ module.exports = {
   NOT_FOUND_CARD: { message: 'Карточка с указанным _id не найдена' },
   INTERNAL_SERVER: { message: 'Произошла ошибка на сервере' },
   BAD_EMAIL_VALID: { message: 'Неправильный формат почты' },
+  UNAUTH_REQUEST_DATA: { message: 'Указан неправильный логин или пароль' },
+  BAD_REQUEST_CARD_DELETE: { message: 'Недостаточно прав для удаления карточки' },
+  BAD_REQUEST_EMAIL_CREATE: { message: 'Данный email уже зарегистрирован' },
 };
