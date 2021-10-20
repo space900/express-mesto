@@ -25,13 +25,6 @@ app.use(helmet());
 app.use(limiter);
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '615b330494e76a795d48c9b3',
-  };
-  next();
-});
-
 app.use('/', usersRoutes);
 app.use('/', cardsRoutes);
 app.post('/signin', login);
