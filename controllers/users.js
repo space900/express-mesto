@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 /* eslint-disable arrow-body-style */
 const User = require('../models/user');
 const messages = require('../errors/messages');
-const { UnauthorizedError } = require('../errors/classes');
+const { UnauthorizedError, NotFound, BadRequest } = require('../errors/classes');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -106,6 +106,23 @@ module.exports.login = (req, res, next) => {
     })
     .catch(() => {
       throw new UnauthorizedError(messages.UNAUTH_REQUEST_DATA);
+    })
+    .catch(next);
+};
+
+module.exports.getCurrentUserInfo = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        throw new NotFound(messages.NOT_FOUND);
+      }
+      return res.status(200).send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        throw new BadRequest(err.message);
+      }
+      next(err);
     })
     .catch(next);
 };

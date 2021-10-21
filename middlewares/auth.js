@@ -5,15 +5,14 @@ const { UnauthorizedError } = require('../errors/classes');
 
 // eslint-disable-next-line consistent-return
 module.exports.auth = (req, res, next) => {
-  const authorization = req.headers;
-  const extractBearerToken = authorization.replace('Bearer', '');
+  const { authorization } = req.headers;
   const { JWT_SECRET = 'super-strong-secret' } = process.env;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
     throw new UnauthorizedError(messages.BAD_REQUEST_AUTH);
   }
 
-  const token = extractBearerToken;
+  const token = authorization.replace('Bearer', '');
   let payload;
 
   try {

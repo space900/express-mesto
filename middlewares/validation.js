@@ -3,7 +3,7 @@ const { isURL, isEmail } = require('validator');
 const messages = require('../errors/messages');
 
 module.exports.userValidation = celebrate({
-  body: Joi.object.keys({
+  body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().custom((value) => {

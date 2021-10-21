@@ -9,6 +9,8 @@ const cardsRoutes = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const { NotFound } = require('./errors/classes');
 const messages = require('./errors/messages');
+const { auth } = require('./middlewares/auth');
+const { loginValidation, userValidation } = require('./middlewares/validation');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -26,21 +28,21 @@ app.use(helmet());
 app.use(limiter);
 app.use(express.json());
 
-app.use('/', usersRoutes);
-app.use('/', cardsRoutes);
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.use('/', auth, usersRoutes);
+app.use('/', auth, cardsRoutes);
+app.post('/signin', loginValidation, login);
+app.post('/signup', userValidation, createUser);
 
 app.use('*', () => {
   throw new NotFound(messages.SERVER_NOT_FOUND);
 });
 app.use(errors());
 
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  res.status(statusCode).send({ message: statusCode === 500 ? 'На сервере произошла ошибка' : message });
-  next();
-});
+// app.use((err, req, res, next) => {
+//   const { statusCode = 500, message } = err;
+//   res.status(statusCode).send({ message: statusCode === 500 ? 'На сервере произошла ошибка' : message });
+//   next();
+// });
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console

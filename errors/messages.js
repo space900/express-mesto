@@ -10,8 +10,9 @@ module.exports = {
   BAD_EMAIL_VALID: { message: 'Неправильный формат почты' },
   BAD_URL_VALID: { message: 'Неправильный формат ссылки' },
   UNAUTH_REQUEST_DATA: { message: 'Указан неправильный логин или пароль' },
-  BAD_REQUEST_CARD_DELETE: { message: 'Недостаточно прав для удаления карточки' },
+  BAD_REQUEST_CARD_DELETE: { message: 'Недостаточно прав для операции' },
   BAD_REQUEST_EMAIL_CREATE: { message: 'Данный email уже зарегистрирован' },
   SERVER_NOT_FOUND: { message: 'Запрашиваемые данные не найдены' },
-  BAD_REQUEST_AUTH: { message: 'Что-то не так с токеном, необходима авторизация' },
+  BAD_REQUEST_AUTH: 'Что-то не так с токеном, необходима авторизация',
+  TOO_EASY_PASSWORD: { message: 'слишком простой пароль, его легко подобрать' },
 };
