@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 /* eslint-disable arrow-body-style */
 const User = require('../models/user');
 const messages = require('../errors/messages');
@@ -8,7 +10,7 @@ const { UnauthorizedError, NotFound, BadRequest } = require('../errors/classes')
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.status(200).send(users))
+    .then((users) => res.status(200).send({ allUsers: users }))
     .catch(next);
 };
 
@@ -17,14 +19,14 @@ module.exports.getUserById = (req, res, next) => {
     // eslint-disable-next-line consistent-return
     .then((user) => {
       if (!user) {
-        return res.status(404).send(messages.NOT_FOUND);
+        throw new NotFound(messages.NOT_FOUND);
       }
-      return res.status(200).send(user);
+      return res.status(200).send({ userData: user });
     })
     // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send(messages.BAD_REQUEST_USER_SEARCH);
+        throw new BadRequest(messages.BAD_REQUEST_USER_SEARCH);
       }
       next(err);
     })
@@ -48,9 +50,10 @@ module.exports.createUser = (req, res, next) => {
       // eslint-disable-next-line consistent-return
       .catch((err) => {
         if (err.name === 'ValidationError') {
-          return res.status(400).send(messages.BAD_REQUEST_USER_CREATE);
+          throw new BadRequest(messages.BAD_REQUEST_USER_CREATE);
+        } else {
+          next(err);
         }
-        next(err);
       }))
     .catch(next);
 };
@@ -60,16 +63,10 @@ module.exports.updateProfile = (req, res, next) => {
   const id = req.user._id;
 
   return User.findByIdAndUpdate(id, { name, about }, { new: true, runValidators: true })
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send(messages.NOT_FOUND);
-      }
-      return res.status(200).send(user);
-    })
-    // eslint-disable-next-line consistent-return
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send(messages.BAD_REQUEST_USER_UPD);
+        throw new BadRequest(messages.BAD_REQUEST_USER_UPD);
       }
       next(err);
     })
@@ -81,16 +78,10 @@ module.exports.updateAvatar = (req, res, next) => {
   const id = req.user._id;
 
   return User.findByIdAndUpdate(id, { avatar }, { new: true, runValidators: true })
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send(messages.BAD_REQUEST_AVATAR_UPD);
-      }
-      return res.status(200).send(user);
-    })
-    // eslint-disable-next-line consistent-return
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(404).send(messages.BAD_REQUEST_AVATAR_UPD);
+        throw new BadRequest(messages.BAD_REQUEST_AVATAR_UPD);
       }
       next(err);
     })
@@ -99,11 +90,11 @@ module.exports.updateAvatar = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  const { JWT_SECRET = 'super-strong-secret' } = process.env;
+  // const { JWT_SECRET = 'super-strong-secret' } = process.env;
 
   User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'super-strong-secret', { expiresIn: '7d' });
       res.send({ token });
     })
     .catch(() => {
