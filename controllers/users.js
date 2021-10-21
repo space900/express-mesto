@@ -27,8 +27,9 @@ module.exports.getUserById = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         throw new BadRequest(messages.BAD_REQUEST_USER_SEARCH);
+      } else {
+        next(err);
       }
-      next(err);
     })
     .catch(next);
 };
@@ -67,8 +68,9 @@ module.exports.updateProfile = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequest(messages.BAD_REQUEST_USER_UPD);
+      } else {
+        next(err);
       }
-      next(err);
     })
     .catch(next);
 };
@@ -82,8 +84,9 @@ module.exports.updateAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequest(messages.BAD_REQUEST_AVATAR_UPD);
+      } else {
+        next(err);
       }
-      next(err);
     })
     .catch(next);
 };
@@ -92,7 +95,7 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   // const { JWT_SECRET = 'super-strong-secret' } = process.env;
 
-  User.findUserByCredentials(email, password)
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'super-strong-secret', { expiresIn: '7d' });
       res.send({ token });

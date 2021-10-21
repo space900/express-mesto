@@ -28,10 +28,11 @@ app.use(helmet());
 app.use(limiter);
 app.use(express.json());
 
-app.use('/', auth, usersRoutes);
-app.use('/', auth, cardsRoutes);
 app.post('/signin', loginValidation, login);
 app.post('/signup', userValidation, createUser);
+
+app.use('/', auth, usersRoutes);
+app.use('/', auth, cardsRoutes);
 
 app.use('*', () => {
   throw new NotFound(messages.SERVER_NOT_FOUND);

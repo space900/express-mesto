@@ -2,6 +2,7 @@
 /* eslint-disable arrow-body-style */
 const Card = require('../models/card');
 const messages = require('../errors/messages');
+const { BadRequest } = require('../errors/classes');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -16,9 +17,10 @@ module.exports.createCard = (req, res, next) => {
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send(messages.BAD_REQUEST_CARD);
+        throw new BadRequest(messages.BAD_REQUEST_CARD);
+      } else {
+        next(err);
       }
-      next(err);
     })
     .catch(next);
 };
@@ -33,7 +35,9 @@ module.exports.deleteCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send(messages.BAD_REQUEST_CARD);
+        throw new BadRequest(messages.BAD_REQUEST_CARD);
+      } else {
+        next(err);
       }
     })
     .catch(next);
@@ -51,9 +55,10 @@ module.exports.likeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send(messages.BAD_REQUEST_CARD);
+        throw new BadRequest(messages.BAD_REQUEST_CARD);
+      } else {
+        next(err);
       }
-      next(err);
     })
     .catch(next);
 };
@@ -70,9 +75,10 @@ module.exports.dislikeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send(messages.BAD_REQUEST_CARD);
+        throw new BadRequest(messages.BAD_REQUEST_CARD);
+      } else {
+        next(err);
       }
-      next(err);
     })
     .catch(next);
 };
