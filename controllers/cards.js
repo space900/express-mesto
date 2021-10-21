@@ -3,6 +3,7 @@
 const Card = require('../models/card');
 const messages = require('../errors/messages');
 const { BadRequest } = require('../errors/classes');
+const { NotFound, ForbiddenError } = require('../errors/classes');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -26,18 +27,18 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  const id = req.user._id;
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
-        return res.status(404).send(messages.NOT_FOUND_CARD);
+        throw new NotFound(messages.NOT_FOUND_CARD);
       }
-      return res.status(200).send(card);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        throw new BadRequest(messages.BAD_REQUEST_CARD);
+      if (card.owner.toString() !== id) {
+        throw new ForbiddenError(messages.BAD_REQUEST_CARD_DELETE);
       } else {
-        next(err);
+        Card.findByIdAndRemove(req.params.cardId)
+          // eslint-disable-next-line no-shadow
+          .then((card) => res.send(card));
       }
     })
     .catch(next);

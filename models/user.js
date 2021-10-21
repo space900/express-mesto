@@ -50,7 +50,8 @@ const userSchema = new mongoose.Schema({
       message: messages.TOO_EASY_PASSWORD,
     },
   },
-});
+},
+{ versionKey: false });
 
 // eslint-disable-next-line func-names
 userSchema.statics.findUserByCredentials = function (email, password) {
