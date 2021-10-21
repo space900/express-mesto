@@ -6,7 +6,9 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 /* eslint-disable arrow-body-style */
 const User = require('../models/user');
 const messages = require('../errors/messages');
-const { UnauthorizedError, NotFound, BadRequest } = require('../errors/classes');
+const {
+  UnauthorizedError, NotFound, BadRequest, ConflictError,
+} = require('../errors/classes');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -38,8 +40,14 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-
-  bcrypt.hash(password, 10)
+  User.findOne({ email })
+    .then((user) => {
+      if (user) {
+        throw new ConflictError(messages.BAD_REQUEST_EMAIL_CREATE);
+      } else {
+        return bcrypt.hash(password, 10);
+      }
+    })
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     })
