@@ -41,7 +41,9 @@ module.exports.createUser = (req, res, next) => {
       name, about, avatar, email, password: hash,
     })
       .then((user) => {
-        return res.status(200).send(user);
+        return res.status(200).send({
+          name: user.name, about: user.about, avatar: user.avatar, email,
+        });
       })
       // eslint-disable-next-line consistent-return
       .catch((err) => {
