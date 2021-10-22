@@ -2,8 +2,9 @@
 /* eslint-disable arrow-body-style */
 const Card = require('../models/card');
 const messages = require('../errors/messages');
-const { BadRequest } = require('../errors/classes');
-const { NotFound, ForbiddenError } = require('../errors/classes');
+const { BadRequest } = require('../errors/classes/badRequest');
+const NotFound = require('../errors/classes/notFound');
+const ForbiddenError = require('../errors/classes/forbiddenError');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})

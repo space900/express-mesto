@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const validator = require('validator');
 const messages = require('../errors/messages');
-const { UnauthorizedError } = require('../errors/classes');
+const UnauthorizedError = require('../errors/classes/unauthorizedError');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -23,9 +23,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-    // validate: {
-    //   // validator(v) {},
-    // },
+    validate: {
+      validator: (URL) => {
+        validator.isURL(URL);
+      },
+      message: messages.BAD_REQUEST_AVATAR_UPD,
+    },
   },
   email: {
     type: String,
@@ -40,7 +43,6 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    minlength: 8,
     required: true,
     select: false,
     validate: {

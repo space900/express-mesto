@@ -30,7 +30,7 @@ module.exports.userIdValidation = celebrate({
 
 module.exports.userAvatarValidation = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().custom((value) => {
+    avatar: Joi.string().required().custom((value) => {
       if (!isURL(value)) {
         throw new CelebrateError(messages.BAD_URL_VALID);
       }

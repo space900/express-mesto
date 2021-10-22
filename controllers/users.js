@@ -6,9 +6,10 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 /* eslint-disable arrow-body-style */
 const User = require('../models/user');
 const messages = require('../errors/messages');
-const {
-  UnauthorizedError, NotFound, BadRequest, ConflictError,
-} = require('../errors/classes');
+const BadRequest = require('../errors/classes/badRequest');
+const UnauthorizedError = require('../errors/classes/unauthorizedError');
+const NotFound = require('../errors/classes/notFound');
+const ConflictError = require('../errors/classes/conflictError');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -110,7 +111,7 @@ module.exports.login = (req, res, next) => {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
         sameSite: true,
-      }).send(messages.SUCCESS_REQUEST_AUTH);
+      }).send({ message: messages.SUCCESS_REQUEST_AUTH });
     })
     .catch(() => {
       throw new UnauthorizedError(messages.UNAUTH_REQUEST_DATA);

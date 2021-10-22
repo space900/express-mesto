@@ -2,12 +2,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 // eslint-disable-next-line no-unused-vars
 const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
-const { NotFound } = require('./errors/classes');
+const { NotFound } = require('./errors/classes/notFound');
 const messages = require('./errors/messages');
 const { auth } = require('./middlewares/auth');
 const { loginValidation, userValidation } = require('./middlewares/validation');
@@ -24,6 +25,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
+app.use(cookieParser());
 app.use(helmet());
 app.use(limiter);
 app.use(express.json());
