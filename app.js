@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
+const cors = require('cors');
 // eslint-disable-next-line no-unused-vars
 const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
@@ -26,6 +27,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
+app.use(cors);
 app.use(requestLogger);
 
 app.use(cookieParser());
